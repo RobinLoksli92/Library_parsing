@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from pathvalidate import sanitize_filename
 
 from bs4 import BeautifulSoup
-
+import lxml
 
 def check_for_redirect(response):
     if response.history:
@@ -58,8 +58,12 @@ for book_id in range(1,11):
         # download_txt(download_books_response, filename)
         book_image = soup.find(class_='bookimage').find('img')['src']
         image_url = urljoin('https://tululu.org/', book_image)
-        image_name = book_image.split('/')[-1]
-        download_image(image_url, filename=image_name)
+        image_name = os.path.split(book_image)[1]
+        # download_image(image_url, filename=image_name)
+        book_comments = soup.find_all(class_='texts')
+        
+        for comment in book_comments:
+            comment_text = comment.find(class_='black').text
 
     except requests.HTTPError:
         pass
