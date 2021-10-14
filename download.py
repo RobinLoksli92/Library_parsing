@@ -6,7 +6,7 @@ import requests
 def download_txt(response, filename, folder ='books/'): 
     sanitazed_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, sanitazed_filename)
-    with open(filepath, 'wb') as file:
+    with open(f'{filepath}.txt', 'wb') as file:
         file.write(response.content)
     return filepath
 

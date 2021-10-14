@@ -76,7 +76,7 @@ def main():
             check_for_redirect(download_books_response)
             some_book = parse_book_page(soup)
             book_title = some_book['Заголовок']
-            filename = f'{book_id}. {book_title}.txt'
+            # filename = f'{book_id}. {book_title}.txt'
             image_url = some_book['Картинка']
             image_url_path = urlsplit(image_url).path
             image_name = os.path.split(image_url_path)[-1]
