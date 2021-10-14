@@ -4,12 +4,11 @@ import os
 from pathlib import Path
 import requests
 from urllib.parse import urljoin, urlsplit
-from urllib.parse import urlparse
-from pathvalidate import sanitize_filename
-from pprint import PrettyPrinter, pprint
 
 from bs4 import BeautifulSoup
 import lxml
+
+from download import download_comments, download_image, download_txt
 
 
 def check_for_redirect(response):
@@ -51,33 +50,6 @@ def parse_book_genres(books_genres):
             return book_genres
 
 
-def download_txt(response, filename, folder ='books/'): 
-    sanitazed_filename = sanitize_filename(filename)
-    filepath = os.path.join(folder, sanitazed_filename)
-    with open(filepath, 'wb') as file:
-        file.write(response.content)
-    return filepath
-
-
-def download_image(image_url, filename, folder='images/'):
-    response = requests.get(image_url)
-    response.raise_for_status
-    sanitazed_filename = sanitize_filename(filename)
-    filepath = os.path.join(folder, sanitazed_filename)
-    with open(filepath, 'wb') as file:
-        file.write(response.content)
-    return filepath
-
-
-def download_comments(soup, book_title, folder='comments/'):
-    filepath = f'{folder}{book_title}.txt'
-    book_comments = soup.find_all(class_='texts')
-    with open(filepath, 'wb') as file:
-        for comment in book_comments:
-            comment_text = comment.find(class_='black').text
-            file.write(comment_text.encode())
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--start_id',default=1, type=int)
@@ -85,6 +57,7 @@ def main():
     args = parser.parse_args()
     start_book_id = args.start_id
     end_book_id = args.end_id
+
     Path('books/').mkdir(parents=True, exist_ok=True)
     Path('images/').mkdir(parents=True, exist_ok=True)
     Path('comments/').mkdir(parents=True, exist_ok=True)
@@ -105,11 +78,11 @@ def main():
             book_title = some_book['Заголовок']
             filename = f'{book_id}. {book_title}.txt'
             image_url = some_book['Картинка']
-            splited_image_url = urlsplit(image_url).path
-            image_name = os.path.split(splited_image_url)[-1]
-            # download_txt(download_books_response, filename)
-            # download_image(image_url, filename=image_name)
-            download_comments(soup, book_title)
+            image_url_path = urlsplit(image_url).path
+            image_name = os.path.split(image_url_path)[-1]
+            download_txt(download_books_response, filename=book_title)
+            download_image(image_url, filename=image_name)
+            download_comments(soup, filename=book_title)
 
         except requests.HTTPError:
             pass
