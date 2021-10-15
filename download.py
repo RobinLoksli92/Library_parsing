@@ -13,7 +13,7 @@ def download_txt(response, filename, folder ='books/'):
 
 def download_image(image_url, filename, folder='images/'):
     response = requests.get(image_url)
-    response.raise_for_status
+    response.raise_for_status()
     sanitazed_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, sanitazed_filename)
     with open(filepath, 'wb') as file:

@@ -55,24 +55,26 @@ def main():
     parser.add_argument('--start_id',default=1, type=int)
     parser.add_argument('--end_id', default=11, type=int)
     args = parser.parse_args()
-    start_book_id = args.start_id
-    end_book_id = args.end_id
-
+    
     Path('books/').mkdir(parents=True, exist_ok=True)
     Path('images/').mkdir(parents=True, exist_ok=True)
     Path('comments/').mkdir(parents=True, exist_ok=True)
 
-    for book_id in range(start_book_id, end_book_id):
+    for book_id in range(args.start_id, args.end_id):
+        payload = {
+            'id': book_id
+        }
         books_url = f'https://tululu.org/b{book_id}'
-        books_response = requests.get(books_url)
-        books_response.raise_for_status
-        soup = BeautifulSoup(books_response.text, 'lxml')
+        download_books_url = f'https://tululu.org/txt.php'
         
-        download_books_url = f'https://tululu.org/txt.php?id={book_id}'
-        download_books_response = requests.get(download_books_url)
-        download_books_response.raise_for_status
-
         try:
+            books_response = requests.get(books_url)
+            books_response.raise_for_status()
+            soup = BeautifulSoup(books_response.text, 'lxml')
+            
+            download_books_response = requests.get(download_books_url, params=payload)
+            download_books_response.raise_for_status()
+
             check_for_redirect(download_books_response)
             some_book = parse_book_page(soup)
             book_title = some_book['Заголовок']
