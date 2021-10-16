@@ -8,21 +8,16 @@ from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 import lxml
 
+from check_for_redirect import check_for_redirect
 from download import download_comments, download_image, download_txt
-
-
-def check_for_redirect(response):
-    if response.history:
-        raise requests.HTTPError
 
 
 def parse_book_page(soup):
     some_book = {}
-    title_tag = soup.find('h1')
-    title_text = title_tag.text
-    splitted_title_text = title_text.split('::')
-    book_title = splitted_title_text[0].strip()
-    book_author = splitted_title_text[-1].strip()
+    title_text = soup.find('h1').text
+    book_title, book_author = title_text.split('::')
+    book_title = book_title.strip()
+    book_author = book_title.strip()
     book_image = soup.find(class_='bookimage').find('img')['src']
     image_url = urljoin('https://tululu.org/', book_image)
     books_genres = soup.find_all('span', class_='d_book')
@@ -32,7 +27,7 @@ def parse_book_page(soup):
     for comment in book_comments:
         comment_text = comment.find(class_='black').text
         comments.append(comment_text)
-         
+
     some_book['Заголовок'] = book_title
     some_book['Автор'] = book_author
     some_book['Жанр книги'] = book_genre
@@ -61,33 +56,26 @@ def main():
     Path('comments/').mkdir(parents=True, exist_ok=True)
 
     for book_id in range(args.start_id, args.end_id):
-        payload = {
-            'id': book_id
-        }
-        books_url = f'https://tululu.org/b{book_id}'
-        download_books_url = f'https://tululu.org/txt.php'
+        books_url = f'https://tululu.org/b{book_id}/'
         
-        try:
-            books_response = requests.get(books_url)
-            books_response.raise_for_status()
-            soup = BeautifulSoup(books_response.text, 'lxml')
-            
-            download_books_response = requests.get(download_books_url, params=payload)
-            download_books_response.raise_for_status()
+        book_response = requests.get(books_url)
+        book_response.raise_for_status()
 
-            check_for_redirect(download_books_response)
+        try:
+            check_for_redirect(book_response)
+            soup = BeautifulSoup(book_response.text, 'lxml')
             some_book = parse_book_page(soup)
-            book_title = some_book['Заголовок']
-            # filename = f'{book_id}. {book_title}.txt'
-            image_url = some_book['Картинка']
-            image_url_path = urlsplit(image_url).path
-            image_name = os.path.split(image_url_path)[-1]
-            download_txt(download_books_response, filename=book_title)
-            download_image(image_url, filename=image_name)
-            download_comments(soup, filename=book_title)
+            # book_title = some_book['Заголовок']
+            # image_url = some_book['Картинка']
+            # image_url_path = urlsplit(image_url).path
+            # image_name = os.path.split(image_url_path)[-1]
+            # download_txt(book_id, filename=book_title)
+            # download_image(image_url, filename=image_name)
+            # download_comments(soup, filename=book_title)
+            print(some_book['Заголовок'])
 
         except requests.HTTPError:
-            pass
+            print('Ошибочка вышла')
 
 
 if __name__ == '__main__':
