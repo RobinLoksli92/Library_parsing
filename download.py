@@ -15,25 +15,16 @@ def download_txt(book_id, filename, folder ='books/'):
     check_for_redirect(download_books_response)
     sanitazed_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, sanitazed_filename)
-    with open(f'{filepath}.txt', 'wb') as file:
-        file.write(download_books_response.content)
+    with open(f'{filepath}_{book_id}.txt', 'wb') as file:
+        file.write(download_books_response.text)
     return filepath
 
 
-def download_image(image_url, filename, folder='images/'):
+def download_image(image_url, book_id, filename, folder='images/'):
     response = requests.get(image_url)
     response.raise_for_status()
     sanitazed_filename = sanitize_filename(filename)
-    filepath = os.path.join(folder, sanitazed_filename)
+    filepath = f'{folder}{book_id}_{sanitazed_filename}'
     with open(filepath, 'wb') as file:
         file.write(response.content)
     return filepath
-
-
-def download_comments(soup, filename, folder='comments/'):
-    filepath = f'{folder}{filename}.txt'
-    book_comments = soup.find_all(class_='texts')
-    with open(filepath, 'wb') as file:
-        for comment in book_comments:
-            comment_text = comment.find(class_='black').text
-            file.write(comment_text.encode())
