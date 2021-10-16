@@ -1,5 +1,4 @@
 import argparse
-from posixpath import split
 from requests.models import HTTPError
 import os
 from pathlib import Path
@@ -47,7 +46,6 @@ def main():
     
     Path('books/').mkdir(parents=True, exist_ok=True)
     Path('images/').mkdir(parents=True, exist_ok=True)
-    Path('comments/').mkdir(parents=True, exist_ok=True)
 
     for book_id in range(args.start_id, args.end_id):
         book_url = f'https://tululu.org/b{book_id}/'
