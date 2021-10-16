@@ -16,7 +16,7 @@ def download_txt(book_id, filename, folder ='books/'):
     sanitazed_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, sanitazed_filename)
     with open(f'{filepath}_{book_id}.txt', 'wb') as file:
-        file.write(download_books_response.text)
+        file.write(download_books_response.text.encode())
     return filepath
 
 
