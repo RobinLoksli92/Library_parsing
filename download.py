@@ -15,8 +15,8 @@ def download_txt(book_id, filename, folder ='books/'):
     check_for_redirect(download_books_response)
     sanitazed_filename = sanitize_filename(filename)
     filepath = os.path.join(folder, sanitazed_filename)
-    with open(f'{filepath}_{book_id}.txt', 'wb') as file:
-        file.write(download_books_response.text.encode())
+    with open(f'{filepath}_{book_id}.txt', 'w', encoding='utf-8') as file:
+        file.write(download_books_response.text)
     return filepath
 
 

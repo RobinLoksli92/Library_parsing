@@ -19,23 +19,28 @@ def parse_book_page(soup):
     book_author = book_title.strip()
     book_image = soup.find(class_='bookimage').find('img')['src']
     image_url = urljoin('https://tululu.org/', book_image)
-    books_genres = soup.find_all('span', class_='d_book')
-    book_genre = parse_book_genres(books_genres)
+    books_genres = soup.find('span', class_='d_book')
+    book_genre = [genre.text for genre in books_genres.find_all('a')]
     book_comments = soup.find_all(class_='texts')
     comments = [comment.find(class_='black').text for comment in book_comments]
     some_book = {
         'Заголовок' : book_title,
         'Автор' : book_author,
-        'Жанр книги' : book_genre,
+        'Жанр' : book_genre,
         'Картинка' : image_url,
         'Комменты' : comments
     }
     return some_book
     
 
-def parse_book_genres(books_genres):
-    book_genre = [genre.find('a')['title'].split('-')[0].split(',') for genre in books_genres]
-    return book_genre
+# def parse_book_genres(books_genres):
+#     book_genre = []
+#     for genre in books_genres:
+#         genres = genre.find_all('a')
+#         for genre in genres:
+#             book_genre.append(genre.text)
+#     return book_genre  
+
 
 
 def main():
@@ -50,10 +55,9 @@ def main():
     for book_id in range(args.start_id, args.end_id):
         book_url = f'https://tululu.org/b{book_id}/'
         
-        book_response = requests.get(book_url)
-        book_response.raise_for_status()
-
         try:
+            book_response = requests.get(book_url)
+            book_response.raise_for_status()
             check_for_redirect(book_response)
             soup = BeautifulSoup(book_response.text, 'lxml')
             some_book = parse_book_page(soup)
@@ -63,9 +67,9 @@ def main():
             image_name = os.path.split(image_url_path)[-1]
             download_txt(book_id, filename=book_title)
             download_image(image_url, book_id, filename=image_name)
-
+            
         except requests.HTTPError:
-            print('Ошибочка вышла')
+            pass
 
 
 if __name__ == '__main__':
