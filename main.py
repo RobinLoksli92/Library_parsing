@@ -33,16 +33,6 @@ def parse_book_page(soup):
     return some_book
     
 
-# def parse_book_genres(books_genres):
-#     book_genre = []
-#     for genre in books_genres:
-#         genres = genre.find_all('a')
-#         for genre in genres:
-#             book_genre.append(genre.text)
-#     return book_genre  
-
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--start_id',default=1, type=int)
@@ -53,8 +43,7 @@ def main():
     Path('images/').mkdir(parents=True, exist_ok=True)
 
     for book_id in range(args.start_id, args.end_id):
-        book_url = f'https://tululu.org/b{book_id}/'
-        
+        book_url = f'https://tululu.org/b{book_id}/' 
         try:
             book_response = requests.get(book_url)
             book_response.raise_for_status()
@@ -67,7 +56,7 @@ def main():
             image_name = os.path.split(image_url_path)[-1]
             download_txt(book_id, filename=book_title)
             download_image(image_url, book_id, filename=image_name)
-            
+
         except requests.HTTPError:
             pass
 
