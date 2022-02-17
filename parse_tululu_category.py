@@ -19,15 +19,17 @@ with open('book_discription.json','r', encoding='utf-8') as file:
     for book in json.load(file):
         book_discription.append(book)
 
-for page in range(1,4):
+for page in range(1,2):
     url = f'http://tululu.org/l55/{page}'
     response = requests.get(url)
     response.raise_for_status()
     fantastic_books = response.text
     soup = BeautifulSoup(fantastic_books, 'lxml')
-    books = soup.find_all(class_='d_book')
-    for book in books:    
-        book_link = book.find('a')['href']
+    # books = soup.find_all(class_='d_book')
+    imagelink_selector = '.d_book a[href*="/b"]'
+    books_links = soup.select(imagelink_selector)
+    for book_link in books_links:
+        book_link = book_link['href']
         book_url = f'http://tululu.org{book_link}'
         try:
             book_response = requests.get(book_url)
