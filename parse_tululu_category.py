@@ -12,9 +12,6 @@ from download import download_image, download_txt
 from book_page_parser import parse_book_page
 
 
-book_discription = []
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--start_page',default=1, type=int)
@@ -26,6 +23,7 @@ def main():
     parser.add_argument('--skip_txt', default=True, action='store_false')
     args = parser.parse_args()
 
+    book_discription = []
     with open('book_discription.json','r', encoding='utf-8') as file:
         for book in json.load(file):
             book_discription.append(book)
