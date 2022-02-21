@@ -9,7 +9,7 @@ import lxml
 
 from check_for_redirect import check_for_redirect
 from download import download_image, download_txt
-from main import parse_book_page
+from book_page_parser import parse_book_page
 
 
 book_discription = []
@@ -64,7 +64,7 @@ def main():
                     pass
             except requests.HTTPError:
                 pass
-    with open(f'{args.json_path}/book_discription.json','w', encoding='utf-8') as file:
+    with open(f'{args.json_path}book_discription.json','w', encoding='utf-8') as file:
         json.dump(book_discription, file, ensure_ascii=False)
 
 
