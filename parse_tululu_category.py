@@ -51,15 +51,15 @@ def main():
                 image_url_path = urlsplit(image_url).path
                 image_name = os.path.split(image_url_path)[-1]
                 book_id = ''.join([symbol for symbol in book_link if symbol.isdigit()])
-                if args.skip_imgs and args.skip_txt:
-                    download_txt(book_id, filename=book_title, folder = args.dest_txt_folder)
-                    download_image(image_url, book_id, filename=image_name, folder=args.dest_img_folder)
-                elif not args.skip_imgs:
+        
+                if not args.skip_imgs:
                     download_txt(book_id, filename=book_title, folder = args.dest_txt_folder)
                 elif not args.skip_txt:
                     download_image(image_url, book_id, filename=image_name, folder=args.dest_img_folder)
-                elif not args.skip_imgs and not args.skip_txt:
-                    pass
+                else:
+                   download_txt(book_id, filename=book_title, folder = args.dest_txt_folder)  
+                   download_image(image_url, book_id, filename=image_name, folder=args.dest_img_folder)   
+                
             except requests.HTTPError:
                 pass
     with open(f'{args.json_path}book_discription.json','w', encoding='utf-8') as file:
