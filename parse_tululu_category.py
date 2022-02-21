@@ -18,7 +18,7 @@ book_discription = []
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--start_page',default=1, type=int)
-    parser.add_argument('--end_page', default=2, type=int)  
+    parser.add_argument('--end_page', default=701, type=int)  
     parser.add_argument('--dest_img_folder', default='images/', type=str)
     parser.add_argument('--dest_txt_folder', default='books', type=str)
     parser.add_argument('--json_path', default='', type=str)
