@@ -139,3 +139,4 @@ cython_debug/
 
 books/
 images/
+book_discription.json
