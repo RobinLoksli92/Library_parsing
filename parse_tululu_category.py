@@ -54,11 +54,8 @@ def main():
         
                 if not args.skip_imgs:
                     download_txt(book_id, filename=book_title, folder = args.dest_txt_folder)
-                elif not args.skip_txt:
+                if not args.skip_txt:
                     download_image(image_url, book_id, filename=image_name, folder=args.dest_img_folder)
-                else:
-                   download_txt(book_id, filename=book_title, folder = args.dest_txt_folder)  
-                   download_image(image_url, book_id, filename=image_name, folder=args.dest_img_folder)   
                 
             except requests.HTTPError:
                 pass
