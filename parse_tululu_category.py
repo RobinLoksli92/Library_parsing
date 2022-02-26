@@ -12,10 +12,21 @@ from download import download_image, download_txt
 from book_page_parser import parse_book_page
 
 
+def find_last_page():
+    url = 'http://tululu.org/l55/'
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text)
+    pages_selector = '.center .npage'
+    pages = soup.select(pages_selector)
+    for page in pages[-1]:
+        return page
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--start_page',default=1, type=int)
-    parser.add_argument('--end_page', default=701, type=int)  
+    parser.add_argument('--end_page', default=find_last_page(), type=int)  
     parser.add_argument('--dest_img_folder', default='images/', type=str)
     parser.add_argument('--dest_txt_folder', default='books', type=str)
     parser.add_argument('--json_path', default='', type=str)
